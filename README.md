@@ -7,8 +7,10 @@
 
 115 网盘 WebDav 服务，可配合支持 WebDAV 协议的客户端 App 食用，如 [Infuse](https://firecore.com/infuse)、[nPlayer](https://nplayer.com) 
 
+新项目 rclone 改版，对比 115drive-webdav 功能更强大，支持 WebDav 服务，本地磁盘挂载，文件批量下载到本地等功能，提供预编译包可自行下载试用 https://github.com/gaoyb7/115drive-webdav/releases/tag/v0.1.0-rclone
+
 ## 下载
-https://github.com/gaoyb7/115drive-webdav/releases
+https://github.com/gaoyb7/115drive-webdav/releases/tag/v0.1.4
 
 ## 运行
 需要获取 115 网盘 Cookie 信息，包括 UID、CID、SEID，网页版 Cookie 时效较短，建议抓包 App 请求获取 Cookie，iOS 系统可使用 [Stream](https://apps.apple.com/cn/app/stream/id1312141691) 抓包
@@ -18,12 +20,19 @@ https://github.com/gaoyb7/115drive-webdav/releases
 
 ## Docker 运行
 ```bash
+# 通过命令参数获取配置
 docker run -d -p 8081:8081 gaoyb7/115drive-webdav \
 	--host=0.0.0.0 --port=8081 \
 	--user=user --pwd=123456 \
 	--uid=xxxxxx \
 	--cid=xxxxxx \
 	--seid=xxxxxx
+	
+# 通过配置文件获取配置
+docker run -d -p 8081:8081 \
+	-v /path/to/your/config:/etc/115drive-webdav.json \
+	gaoyb7/115drive-webdav \
+	--config /etc/115drive-webdav.json
 ```
 
 ## 参数说明
@@ -73,3 +82,34 @@ docker run -d -p 8081:8081 gaoyb7/115drive-webdav \
 
 ### Android
 TODO
+
+## rclone
+### 配置生成
+```
+# 根据提示生成对应的 115 配置，生成配置后，可进行 rclone WebDav 服务启动，磁盘挂载等操作
+# 网上教程很多自行查阅
+./rclone config
+```
+
+### WebDav 服务启动
+```
+./rclone serve webdav --addr :8081  -v 115drive:
+```
+
+### 本地磁盘挂载
+```
+./rclone mount -v \
+        --allow-other \
+        --read-only \
+        --vfs-cache-mode=full \
+        --vfs-cache-max-size=4G \
+        --vfs-read-chunk-size=8M \
+        --cache-dir=/data/.cache/rclone \
+        --buffer-size=32M \
+        115drive: /path/to/local
+```
+
+### 文件批量下载
+```
+./rclone copy -P --multi-thread-streams=2 --transfers=5 115drive:/path/to/remote ./path/to/local
+```
