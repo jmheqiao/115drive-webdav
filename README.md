@@ -7,16 +7,20 @@
 
 115 网盘 WebDav 服务，可配合支持 WebDAV 协议的客户端 App 食用，如 [Infuse](https://firecore.com/infuse)、[nPlayer](https://nplayer.com) 
 
-新项目 rclone 改版，对比 115drive-webdav 功能更强大，支持 WebDav 服务，本地磁盘挂载，文件批量下载到本地等功能，提供预编译包可自行下载试用 https://github.com/gaoyb7/115drive-webdav/releases/tag/v0.1.0-rclone
+新项目 rclone 改版，对比 115drive-webdav 功能更强大，支持 WebDav 服务，本地磁盘挂载，文件批量下载到本地等功能，提供预编译包可自行下载试用 https://github.com/gaoyb7/rclone-release
 
 ## 下载
-https://github.com/gaoyb7/115drive-webdav/releases/tag/v0.1.4
+https://github.com/gaoyb7/115drive-webdav/releases
+
+* 暂只支持 Linux x86_64 版本，程序下载后，需要额外下载加解密库 https://raw.githubusercontent.com/gaoyb7/115drive-webdav/main/115/libencode115.so 到 /usr/lib 目录下才可运行。
+* 需要使用 App 的 Cookie，浏览器版本的 Cookie 无法正常下载文件，抓包方法参考下面说明。
 
 ## 运行
 需要获取 115 网盘 Cookie 信息，包括 UID、CID、SEID，网页版 Cookie 时效较短，建议抓包 App 请求获取 Cookie，iOS 系统可使用 [Stream](https://apps.apple.com/cn/app/stream/id1312141691) 抓包
 ```bash
 ./115drive-webdav --host=0.0.0.0 --port=8080 --user=user --pwd=123456 --uid=xxxxxx --cid=xxxxxxx --seid=xxxxx
 ```
+服务启动成功后，用支持 WebDav 协议的客户端连接即可，不支持浏览器直接打开
 
 ## Docker 运行
 ```bash
@@ -81,35 +85,4 @@ docker run -d -p 8081:8081 \
 <img src="https://user-images.githubusercontent.com/9281603/183956374-f3eb563b-3c04-4285-a0e8-af3eda13e42a.png" width="50%">
 
 ### Android
-TODO
-
-## rclone
-### 配置生成
-```
-# 根据提示生成对应的 115 配置，生成配置后，可进行 rclone WebDav 服务启动，磁盘挂载等操作
-# 网上教程很多自行查阅
-./rclone config
-```
-
-### WebDav 服务启动
-```
-./rclone serve webdav --addr :8081  -v 115drive:
-```
-
-### 本地磁盘挂载
-```
-./rclone mount -v \
-        --allow-other \
-        --read-only \
-        --vfs-cache-mode=full \
-        --vfs-cache-max-size=4G \
-        --vfs-read-chunk-size=8M \
-        --cache-dir=/data/.cache/rclone \
-        --buffer-size=32M \
-        115drive: /path/to/local
-```
-
-### 文件批量下载
-```
-./rclone copy -P --multi-thread-streams=2 --transfers=5 115drive:/path/to/remote ./path/to/local
-```
+参考 https://myoule.zhipin.com/articles/c27b2972802dc15fqxB72Ny9Eg~~.html
