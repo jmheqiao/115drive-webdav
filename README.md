@@ -7,13 +7,13 @@
 
 115 网盘 WebDav 服务，可配合支持 WebDAV 协议的客户端 App 食用，如 [Infuse](https://firecore.com/infuse)、[nPlayer](https://nplayer.com) 
 
-新项目 rclone 改版，对比 115drive-webdav 功能更强大，支持 WebDav 服务，本地磁盘挂载，文件批量下载到本地等功能，提供预编译包可自行下载试用 https://github.com/gaoyb7/rclone-release
+新项目 rclone 改版，对比 115drive-webdav 功能更强大，支持 WebDav 服务，本地磁盘挂载，文件批量下载到本地等功能。https://github.com/gaoyb7/rclone-release
 
 ## 下载
 https://github.com/gaoyb7/115drive-webdav/releases
 
 ## 运行
-需要获取 115 网盘 Cookie 信息，包括 UID、CID、SEID，网页版 Cookie 时效较短，建议抓包 App 请求获取 Cookie，iOS 系统可使用 [Stream](https://apps.apple.com/cn/app/stream/id1312141691) 抓包
+需要获取 115 网盘 Cookie 信息，包括 UID、CID、SEID，网页版 Cookie 时效较短，建议抓包 App 请求获取 Cookie，iOS 系统可使用 [Stream](https://apps.apple.com/cn/app/stream/id1312141691) 抓包，安卓系统使用抓包精灵
 ```bash
 ./115drive-webdav --host=0.0.0.0 --port=8080 --user=user --pwd=123456 --uid=xxxxxx --cid=xxxxxxx --seid=xxxxx
 ```
@@ -22,7 +22,10 @@ https://github.com/gaoyb7/115drive-webdav/releases
 ## Docker 运行
 ```bash
 # 通过命令参数获取配置
-docker run -d -p 8081:8081 gaoyb7/115drive-webdav \
+docker run -d \
+        -p 8081:8081 \
+	--restart unless-stopped \
+        gaoyb7/115drive-webdav:latest \
 	--host=0.0.0.0 --port=8081 \
 	--user=user --pwd=123456 \
 	--uid=xxxxxx \
@@ -30,8 +33,11 @@ docker run -d -p 8081:8081 gaoyb7/115drive-webdav \
 	--seid=xxxxxx
 	
 # 通过配置文件获取配置
-docker run -d -p 8081:8081 \
+# /path/to/your/config 替换为实际配置文件地址
+docker run -d \
+        -p 8081:8081 \
 	-v /path/to/your/config:/etc/115drive-webdav.json \
+        --restart unless-stopped \
 	gaoyb7/115drive-webdav \
 	--config /etc/115drive-webdav.json
 ```
@@ -69,18 +75,8 @@ docker run -d -p 8081:8081 \
 
 ## App Cookie 获取方法
 ### iOS
-* 安装 [Stream](https://apps.apple.com/cn/app/stream/id1312141691)
-
-* 打开 Stream，根据提示设置 HTTPS 抓包，安装证书
-
-* 点击开始抓包
-
-* 切换到 115 App，点开一个视频，开始播放
-
-* 再次切换回 Stream，停止抓包，在抓包历史中，找到 115 相关的域名请求，获取到 Cookie 信息
-
-<img src="https://user-images.githubusercontent.com/9281603/183956374-f3eb563b-3c04-4285-a0e8-af3eda13e42a.png" width="50%">
+* 使用 Stream 抓包，参考 https://cloud.tencent.com/developer/article/1670286
 
 ### Android
-可使用抓包精灵，类似 Stream。
-或者参考 https://myoule.zhipin.com/articles/c27b2972802dc15fqxB72Ny9Eg~~.html
+* 方法一：可使用抓包精灵，类似 Stream。参考 https://play.google.com/store/apps/details?id=com.minhui.networkcapture&hl=zh&gl=US
+* 方法二：使用 Charles 抓包，参考 https://myoule.zhipin.com/articles/c27b2972802dc15fqxB72Ny9Eg~~.html
